@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090d10">
+  <meta name="description" content="SHADOW WORLD — a cinematic black-and-white puzzle adventure by GamerKie. Enter the darkness. Find the truth.">
+  <title>SHADOW WORLD — GamerKie</title>
+  <link rel="icon" type="image/svg+xml" href="./assets/images/gamerkie-mark.svg">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/mobile.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="GamerKie home" onclick="return false">
+        <img src="./assets/images/gamerkie-mark.svg" alt="" width="30" height="30">
+        <span>GAMER<span>KIE</span></span>
+      </a>
+      <div class="chapter-label"><span class="chapter-dot"></span> CHAPTER I <b>THE FORGOTTEN FOREST</b></div>
+      <div class="top-actions">
+        <button id="soundBtn" class="icon-button" type="button" aria-label="Toggle sound" title="Toggle sound">♪</button>
+        <button id="pauseBtn" class="icon-button" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
+      </div>
+    </header>
+
+    <section class="game-frame" aria-label="Shadow World game">
+      <div class="game-stage">
+        <canvas id="gameCanvas" width="960" height="540" aria-label="Game scene. Use arrow keys or A and D to move, Space to jump, and E to interact."></canvas>
+
+        <div class="hud" aria-live="polite">
+          <div class="hud-chapter"><span>01</span><div><small>WORLD</small><strong>THE FORGOTTEN FOREST</strong></div></div>
+          <div class="objective"><small>YOUR PATH</small><span id="objectiveText">Move the timber crate onto the stone plate.</span></div>
+          <div class="progress-wrap"><div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><span id="progressLabel">0%</span></div>
+        </div>
+
+        <div id="controlHint" class="control-hint">A / D OR ← / → MOVE <i></i> SPACE JUMP <i></i> E INTERACT</div>
+
+        <div id="menuScreen" class="screen-layer visible">
+          <div class="menu-panel">
+            <div class="eyebrow"><span></span> A GAMERKIE ORIGINAL</div>
+            <h1>SHADOW<br><em>WORLD</em></h1>
+            <p class="tagline">ENTER THE DARKNESS. FIND THE TRUTH.</p>
+            <p class="intro-copy">The forest remembers every step.<br>Some things should never be found.</p>
+            <div class="menu-actions">
+              <button id="startBtn" class="primary-button" type="button">NEW JOURNEY <span>↗</span></button>
+              <button id="continueBtn" class="secondary-button" type="button">CONTINUE</button>
+            </div>
+            <button id="soundMenuBtn" class="text-button" type="button">SOUND: ON</button>
+            <div class="menu-foot"><span>2D CINEMATIC PUZZLE ADVENTURE</span><span>© GAMERKIE 2026</span></div>
+          </div>
+          <div class="menu-side-note">A WORLD WITHOUT<br>WITNESSES</div>
+        </div>
+
+        <div id="pauseScreen" class="screen-layer">
+          <div class="dialog-panel">
+            <div class="eyebrow"><span></span> JOURNEY PAUSED</div>
+            <h2>STILLNESS<br><em>IN THE DARK</em></h2>
+            <p>The forest is waiting.</p>
+            <button id="resumeBtn" class="primary-button" type="button">RETURN TO THE FOREST <span>↗</span></button>
+            <button id="resetBtn" class="text-button" type="button">RESTART JOURNEY</button>
+          </div>
+        </div>
+
+        <div id="deathScreen" class="screen-layer">
+          <div class="dialog-panel">
+            <div class="eyebrow"><span></span> THE FOREST CLAIMS ANOTHER</div>
+            <h2>LOST IN<br><em>THE DARK</em></h2>
+            <p>Your last memory is still here.</p>
+            <button id="retryBtn" class="primary-button" type="button">RETURN TO CHECKPOINT <span>↗</span></button>
+          </div>
+        </div>
+
+        <div id="completeScreen" class="screen-layer">
+          <div class="dialog-panel">
+            <div class="eyebrow"><span></span> CHAPTER I COMPLETE</div>
+            <h2>BEYOND<br><em>THE TREES</em></h2>
+            <p>Something is waiting on the other side.</p>
+            <div class="chapter-complete">THE FORGOTTEN FOREST <span>✓</span></div>
+            <button id="restartBtn" class="primary-button" type="button">PLAY CHAPTER AGAIN <span>↗</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="touchControls" class="touch-controls" aria-label="Touch game controls">
+        <div class="move-pad">
+          <button data-control="left" class="touch-button direction" type="button" aria-label="Move left">‹</button>
+          <button data-control="right" class="touch-button direction" type="button" aria-label="Move right">›</button>
+        </div>
+        <div class="action-pad">
+          <button data-control="interact" class="touch-button interact" type="button" aria-label="Interact">E</button>
+          <button data-control="jump" class="touch-button jump" type="button" aria-label="Jump">↑</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-bar">
+      <span><b>SHADOW WORLD</b> <i>—</i> A GAMERKIE ORIGINAL</span>
+      <span class="footer-center">MOVE QUIETLY. LOOK CLOSER. SURVIVE.</span>
+      <span>CHAPTER 01 <b> / 08</b></span>
+    </footer>
+  </main>
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
