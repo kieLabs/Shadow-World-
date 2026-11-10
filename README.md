@@ -96,10 +96,3 @@ The included tests cover collision overlap, value clamping, movement easing, and
 ## Originality
 
 SHADOW WORLD is an original GamerKie project inspired by the broad atmospheric puzzle-platformer genre. It does not use LIMBO's characters, levels, artwork, music, story, or other proprietary assets.
-
-
-## 100-level campaign update
-
-The campaign now generates 100 level layouts across eight horror biomes. Each level has a longer side-scrolling route, increasing hazard density, moving spiders, falling-branch traps with warning time, spike beds, pits, raised stepping stones, checkpoints, a pressure-plate gate puzzle, and an exit. Progress unlocks the next level and is saved locally in the browser. Mobile touch controls use independent pointer tracking so simultaneous movement and jump inputs work; landscape button sizes have been reduced.
-
-The level layouts are deterministic per level number, so a given level has the same obstacle arrangement on each replay.
