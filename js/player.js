@@ -62,11 +62,11 @@ export class Player {
     const verticalOverlap = this.y + this.h > crate.y + 5 && this.y < crate.y + crate.h - 4;
     const horizontalOverlap = this.x + this.w > crate.x && this.x < crate.x + crate.w;
     if (verticalOverlap && horizontalOverlap && this.vx > 0 && previousX + this.w <= crate.x + 8) {
-      crate.x = clamp(crate.x + this.vx * dt * 0.92, 220, world.plate.x + 12);
+      crate.x = clamp(crate.x + this.vx * dt * 0.92, 760, 1360 - crate.w);
       crate.vx = this.vx * 0.45;
       this.x = crate.x - this.w;
     } else if (verticalOverlap && horizontalOverlap && this.vx < 0 && previousX >= crate.x + crate.w - 8) {
-      crate.x = clamp(crate.x + this.vx * dt * 0.92, 220, world.plate.x + 12);
+      crate.x = clamp(crate.x + this.vx * dt * 0.92, 760, 1360 - crate.w);
       crate.vx = this.vx * 0.45;
       this.x = crate.x + crate.w;
     }

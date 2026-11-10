@@ -65,14 +65,14 @@ export class Renderer {
     const targetCamera = Math.max(0, Math.min(world.width - W, player.x + player.w / 2 - W * 0.43));
     this.cameraX += (targetCamera - this.cameraX) * Math.min(1, game.dt * 4.2);
 
-    this.drawSky(ctx, world.time, this.cameraX, world.worldIndex);
-    this.drawForest(ctx, world.time, this.cameraX, world.worldIndex);
+    this.drawSky(ctx, world.time, this.cameraX);
+    this.drawForest(ctx, world.time, this.cameraX);
     ctx.save();
     ctx.translate(-this.cameraX, 0);
     this.drawGround(ctx, world);
     this.drawWater(ctx, world);
     this.drawObjects(ctx, world);
-    for (const spider of world.spiders) this.drawSpider(ctx, spider);
+    this.drawSpider(ctx, world.spider);
     if (!game.player.dead) this.drawPlayer(ctx, player);
     this.drawAtmosphereParticles(ctx, world);
     ctx.restore();
@@ -80,13 +80,11 @@ export class Renderer {
     if (game.toastTimer > 0 && game.toast) this.drawToast(ctx, game.toast, game.toastTimer);
   }
 
-  drawSky(ctx, time, cameraX, biome = 0) {
-    const skies = [['#080b10','#20262d','#111619'],['#09090d','#282027','#100e13'],['#071014','#173033','#071013'],['#030609','#14191d','#05080b'],['#100a08','#302019','#0d0908'],['#100308','#321018','#080509'],['#08090e','#24202a','#080a10'],['#120207','#3a0a12','#080408']];
-    const palette = skies[biome] || skies[0];
+  drawSky(ctx, time, cameraX) {
     const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, palette[0]);
-    g.addColorStop(0.54, palette[1]);
-    g.addColorStop(1, palette[2]);
+    g.addColorStop(0, '#080b10');
+    g.addColorStop(0.54, '#20262d');
+    g.addColorStop(1, '#111619');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
     const moonX = 720 - cameraX * 0.045;
@@ -111,7 +109,7 @@ export class Renderer {
     ctx.restore();
   }
 
-  drawForest(ctx, time, cameraX, biome = 0) {
+  drawForest(ctx, time, cameraX) {
     // Distant ridge and layered silhouettes create parallax depth.
     ctx.fillStyle = '#171e23';
     ctx.beginPath(); ctx.moveTo(0, 365);
@@ -124,17 +122,6 @@ export class Renderer {
     for (let i = -2; i < 13; i++) {
       const x = i * 142 - (cameraX * 0.23 % 142) + 40;
       drawTree(ctx, x, 478, 260 + (i % 4) * 40, 110, '#0e1418', true);
-    }
-    // World-specific silhouettes make every chapter feel distinct.
-    if (biome === 1 || biome === 6) {
-      ctx.fillStyle = biome === 1 ? '#0c0a0e' : '#101018';
-      for (let i = 0; i < 9; i++) { const x = (i * 137 - cameraX * .18 % 137); ctx.fillRect(x, 285 + (i % 3) * 20, 48, 190); ctx.fillRect(x + 8, 265 + (i % 3) * 20, 30, 24); }
-    } else if (biome === 2) {
-      ctx.strokeStyle = 'rgba(94,145,132,.18)'; ctx.lineWidth = 3; for (let i = 0; i < 8; i++) { const x = i * 145 - cameraX * .2 % 145; ctx.beginPath(); ctx.moveTo(x, 0); ctx.quadraticCurveTo(x + 30, 90, x - 12, 190); ctx.stroke(); }
-    } else if (biome === 3 || biome === 4 || biome === 5) {
-      ctx.fillStyle = biome === 5 ? '#260b13' : '#0a1014'; for (let i = 0; i < 8; i++) { const x = i * 150 - cameraX * .15 % 150; ctx.fillRect(x, 185 + (i % 3) * 24, 18, 280); ctx.fillRect(x - 14, 185 + (i % 3) * 24, 46, 12); }
-    } else if (biome === 7) {
-      const pulse = .08 + (Math.sin(time * 1.4) + 1) * .035; const red = ctx.createRadialGradient(740, 130, 8, 740, 130, 260); red.addColorStop(0, `rgba(180,10,25,${pulse})`); red.addColorStop(1, 'rgba(180,10,25,0)'); ctx.fillStyle = red; ctx.fillRect(450, -120, 540, 500);
     }
     // Foreground branches frame the playable space.
     ctx.fillStyle = '#090e12';
@@ -161,10 +148,6 @@ export class Renderer {
         ctx.beginPath(); ctx.moveTo(x, p.y + 10); ctx.lineTo(x + n, p.y + 22 + Math.abs(n)); ctx.stroke();
       }
     }
-    for (const pit of world.pits) {
-      const pitGlow = ctx.createLinearGradient(0, pit.y, 0, pit.y + pit.h); pitGlow.addColorStop(0, '#020406'); pitGlow.addColorStop(1, 'rgba(90,0,10,.42)'); ctx.fillStyle = pitGlow; ctx.fillRect(pit.x, pit.y, pit.w, pit.h);
-      ctx.strokeStyle = 'rgba(145,20,28,.28)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(pit.x, pit.y); ctx.lineTo(pit.x + pit.w, pit.y); ctx.stroke();
-    }
     // Roots and scattered stones.
     ctx.strokeStyle = 'rgba(5,9,11,.78)'; ctx.lineWidth = 5;
     for (let x = 65; x < world.width; x += 170) {
@@ -174,12 +157,12 @@ export class Renderer {
       ctx.fillStyle = 'rgba(120,132,132,.19)';
       ctx.beginPath(); ctx.ellipse(x + (x % 17), world.floorY - 5, 3 + (x % 4), 1.5, 0, 0, Math.PI * 2); ctx.fill();
     }
-    for (const spike of world.spikes) {
-      for (let x = spike.x; x < spike.x + spike.w; x += 19) {
-        polygon(ctx, [[x, spike.y + 20], [x + 9, spike.y], [x + 19, spike.y + 20]], '#151a1d');
-        ctx.strokeStyle = 'rgba(190,198,197,.22)'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x + 9, spike.y + 2); ctx.lineTo(x + 11, spike.y + 13); ctx.stroke();
-      }
+    const spike = world.spikes[0];
+    ctx.fillStyle = '#090d10';
+    for (let x = spike.x; x < spike.x + spike.w; x += 19) {
+      polygon(ctx, [[x, spike.y + 20], [x + 9, spike.y], [x + 19, spike.y + 20]], '#151a1d');
+      ctx.strokeStyle = 'rgba(190,198,197,.22)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x + 9, spike.y + 2); ctx.lineTo(x + 11, spike.y + 13); ctx.stroke();
     }
   }
 
@@ -245,13 +228,12 @@ export class Renderer {
     exitGlow.addColorStop(0, 'rgba(202,218,215,.37)'); exitGlow.addColorStop(1, 'rgba(202,218,215,0)');
     ctx.fillStyle = exitGlow; ctx.fillRect(ex.x - 38, ex.y - 25, ex.w + 76, ex.h + 55);
 
-    // Falling dead branches: a short warning pulse precedes each lethal drop.
-    for (const branch of world.branches) {
-      if (branch.triggered && branch.warning > 0) { ctx.fillStyle = `rgba(170,25,25,${.12 + Math.sin(world.time * 28) * .09})`; ctx.beginPath(); ctx.ellipse(branch.x + 45, world.floorY - 5, 64, 12, 0, 0, Math.PI * 2); ctx.fill(); }
-      ctx.save(); ctx.translate(branch.x + 45, branch.y + 8); ctx.rotate(branch.angle + (branch.y - branch.baseY) * .001);
-      ctx.fillStyle = '#121a1d'; ctx.beginPath(); ctx.roundRect(-52, -8, 105, 18, 8); ctx.fill();
-      ctx.strokeStyle = 'rgba(190,197,188,.27)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-38, -4); ctx.lineTo(42, -4); ctx.stroke(); ctx.restore();
-    }
+    // Dropped branch with bark ridges.
+    const branch = world.branch;
+    ctx.save(); ctx.translate(branch.x + 45, branch.y + 8); ctx.rotate(branch.angle + (branch.y - branch.baseY) * .001);
+    ctx.fillStyle = '#121a1d'; ctx.beginPath(); ctx.roundRect(-52, -8, 105, 18, 8); ctx.fill();
+    ctx.strokeStyle = 'rgba(190,197,188,.27)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-38, -4); ctx.lineTo(42, -4); ctx.stroke();
+    ctx.restore();
   }
 
   drawSpider(ctx, spider) {
