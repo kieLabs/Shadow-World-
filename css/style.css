@@ -81,3 +81,11 @@ h2 { font-size: clamp(48px, 7vw, 72px); }
 .footer-center { color: #53605f; font-size: 7px; letter-spacing: 2px; }
 
 @media (min-width: 1300px) { .app-shell { padding-top: 28px; } }
+
+
+/* Visible recovery state for unexpected browser graphics failures. */
+.runtime-error { position: absolute; inset: 0; z-index: 60; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center; background: rgba(4,8,11,.96); color: #edf1eb; }
+.runtime-error.visible { display: flex; }
+.runtime-error strong { font: 800 24px 'Barlow Condensed', Impact, sans-serif; letter-spacing: 2px; }
+.runtime-error span { max-width: 420px; color: #aab7af; font-size: 12px; line-height: 1.6; }
+.runtime-error button { min-height: 42px; padding: 0 18px; border: 1px solid #d7e0d9; background: #d7e0d9; color: #101719; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; }
