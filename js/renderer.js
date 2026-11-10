@@ -70,12 +70,9 @@ export class Renderer {
     ctx.save();
     ctx.translate(-this.cameraX, 0);
     this.drawGround(ctx, world);
-    this.drawClimbStructures(ctx, world);
     this.drawWater(ctx, world);
     this.drawObjects(ctx, world);
-    for (const saw of world.saws) this.drawSaw(ctx, saw);
     for (const spider of world.spiders) this.drawSpider(ctx, spider);
-    for (const stalker of world.stalkers) this.drawStalker(ctx, stalker);
     if (!game.player.dead) this.drawPlayer(ctx, player);
     this.drawAtmosphereParticles(ctx, world);
     ctx.restore();
@@ -120,25 +117,13 @@ export class Renderer {
     ctx.beginPath(); ctx.moveTo(0, 365);
     for (let x = 0; x <= W + 20; x += 20) ctx.lineTo(x, 300 + Math.sin((x + cameraX * .08) * .008) * 23 + Math.sin(x * .021) * 9);
     ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
-    if (biome <= 2) {
-      for (let i = -2; i < 15; i++) {
-        const x = i * 105 - (cameraX * 0.13 % 105);
-        drawTree(ctx, x, 448, 210 + (i % 3) * 38, 88, '#131a1e', false);
-      }
-      for (let i = -2; i < 13; i++) {
-        const x = i * 142 - (cameraX * 0.23 % 142) + 40;
-        drawTree(ctx, x, 478, 260 + (i % 4) * 40, 110, '#0e1418', true);
-      }
-    } else {
-      // Broken industrial ribs and distant arches replace the forest canopy.
-      for (let i = -2; i < 12; i++) {
-        const x = i * 150 - (cameraX * .16 % 150);
-        ctx.fillStyle = biome >= 5 ? '#120d12' : '#0b1115';
-        ctx.fillRect(x, 205 + (i % 3) * 18, 22, 275);
-        ctx.fillRect(x - 15, 205 + (i % 3) * 18, 52, 13);
-        ctx.strokeStyle = 'rgba(150,164,164,.09)'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(x + 11, 220); ctx.lineTo(x + 11 + (i % 2 ? 32 : -25), 470); ctx.stroke();
-      }
+    for (let i = -2; i < 15; i++) {
+      const x = i * 105 - (cameraX * 0.13 % 105);
+      drawTree(ctx, x, 448, 210 + (i % 3) * 38, 88, '#131a1e', false);
+    }
+    for (let i = -2; i < 13; i++) {
+      const x = i * 142 - (cameraX * 0.23 % 142) + 40;
+      drawTree(ctx, x, 478, 260 + (i % 4) * 40, 110, '#0e1418', true);
     }
     // World-specific silhouettes make every chapter feel distinct.
     if (biome === 1 || biome === 6) {
@@ -146,8 +131,8 @@ export class Renderer {
       for (let i = 0; i < 9; i++) { const x = (i * 137 - cameraX * .18 % 137); ctx.fillRect(x, 285 + (i % 3) * 20, 48, 190); ctx.fillRect(x + 8, 265 + (i % 3) * 20, 30, 24); }
     } else if (biome === 2) {
       ctx.strokeStyle = 'rgba(94,145,132,.18)'; ctx.lineWidth = 3; for (let i = 0; i < 8; i++) { const x = i * 145 - cameraX * .2 % 145; ctx.beginPath(); ctx.moveTo(x, 0); ctx.quadraticCurveTo(x + 30, 90, x - 12, 190); ctx.stroke(); }
-    } else if (biome === 3 || biome === 4 || biome === 5 || biome === 6) {
-      ctx.fillStyle = biome >= 5 ? '#260b13' : '#0a1014'; for (let i = 0; i < 8; i++) { const x = i * 150 - cameraX * .15 % 150; ctx.fillRect(x, 185 + (i % 3) * 24, 18, 280); ctx.fillRect(x - 14, 185 + (i % 3) * 24, 46, 12); }
+    } else if (biome === 3 || biome === 4 || biome === 5) {
+      ctx.fillStyle = biome === 5 ? '#260b13' : '#0a1014'; for (let i = 0; i < 8; i++) { const x = i * 150 - cameraX * .15 % 150; ctx.fillRect(x, 185 + (i % 3) * 24, 18, 280); ctx.fillRect(x - 14, 185 + (i % 3) * 24, 46, 12); }
     } else if (biome === 7) {
       const pulse = .08 + (Math.sin(time * 1.4) + 1) * .035; const red = ctx.createRadialGradient(740, 130, 8, 740, 130, 260); red.addColorStop(0, `rgba(180,10,25,${pulse})`); red.addColorStop(1, 'rgba(180,10,25,0)'); ctx.fillStyle = red; ctx.fillRect(450, -120, 540, 500);
     }
@@ -189,16 +174,6 @@ export class Renderer {
       ctx.fillStyle = 'rgba(120,132,132,.19)';
       ctx.beginPath(); ctx.ellipse(x + (x % 17), world.floorY - 5, 3 + (x % 4), 1.5, 0, 0, Math.PI * 2); ctx.fill();
     }
-    for (const tunnel of world.tunnels) {
-      const beam = ctx.createLinearGradient(0, tunnel.y - 14, 0, tunnel.y + tunnel.h);
-      beam.addColorStop(0, '#394145'); beam.addColorStop(.28, '#171e22'); beam.addColorStop(1, '#080c0f');
-      ctx.fillStyle = beam; ctx.fillRect(tunnel.x - 8, tunnel.y - 12, tunnel.w + 16, tunnel.h + 12);
-      ctx.fillStyle = 'rgba(188,199,196,.24)'; ctx.fillRect(tunnel.x - 5, tunnel.y - 11, tunnel.w + 10, 2);
-      for (let bolt = tunnel.x + 14; bolt < tunnel.x + tunnel.w; bolt += 34) {
-        ctx.fillStyle = '#87918f'; ctx.beginPath(); ctx.arc(bolt, tunnel.y - 4, 2.1, 0, Math.PI * 2); ctx.fill();
-        polygon(ctx, [[bolt - 5, tunnel.y + tunnel.h], [bolt, tunnel.y + tunnel.h + 12], [bolt + 5, tunnel.y + tunnel.h]], '#1c2225');
-      }
-    }
     for (const spike of world.spikes) {
       for (let x = spike.x; x < spike.x + spike.w; x += 19) {
         polygon(ctx, [[x, spike.y + 20], [x + 9, spike.y], [x + 19, spike.y + 20]], '#151a1d');
@@ -224,55 +199,6 @@ export class Renderer {
       ctx.strokeStyle = 'rgba(210,222,222,.16)'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(x, w.y + 20 + i * 10, 8 + i * 2, 1.5, 0, 0, Math.PI * 2); ctx.stroke();
     }
-  }
-
-  drawClimbStructures(ctx, world) {
-    for (const ladder of world.ladders) {
-      const top = ladder.topY - 5;
-      const bottom = ladder.bottomY + 4;
-      const metal = ctx.createLinearGradient(ladder.x - 18, 0, ladder.x + 18, 0);
-      metal.addColorStop(0, '#111719'); metal.addColorStop(.48, '#77817e'); metal.addColorStop(1, '#151b1e');
-      ctx.lineWidth = 5; ctx.strokeStyle = metal;
-      ctx.beginPath(); ctx.moveTo(ladder.x - 15, top); ctx.lineTo(ladder.x - 15, bottom); ctx.moveTo(ladder.x + 15, top); ctx.lineTo(ladder.x + 15, bottom); ctx.stroke();
-      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(174,188,184,.42)';
-      for (let y = top + 10; y < bottom; y += 18) {
-        ctx.beginPath(); ctx.moveTo(ladder.x - 14, y); ctx.lineTo(ladder.x + 14, y); ctx.stroke();
-      }
-      ctx.fillStyle = 'rgba(0,0,0,.34)'; ctx.fillRect(ladder.x - 22, bottom - 2, 44, 5);
-    }
-    for (const relay of world.switches) {
-      const cx = relay.x + relay.w / 2; const cy = relay.y + relay.h / 2;
-      const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, relay.activated ? 42 : 30);
-      glow.addColorStop(0, relay.activated ? 'rgba(211,226,218,.44)' : 'rgba(165,25,35,.34)');
-      glow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = glow; ctx.fillRect(cx - 45, cy - 45, 90, 90);
-      ctx.fillStyle = relay.activated ? '#c4d2c9' : '#321116';
-      ctx.fillRect(relay.x, relay.y, relay.w, relay.h);
-      ctx.strokeStyle = relay.activated ? 'rgba(235,245,238,.7)' : 'rgba(209,72,80,.65)';
-      ctx.lineWidth = 2; ctx.strokeRect(relay.x + 3, relay.y + 3, relay.w - 6, relay.h - 6);
-      ctx.fillStyle = relay.activated ? '#eff5ef' : '#c13b43';
-      ctx.beginPath(); ctx.arc(cx, cy, 4.5 + Math.sin(world.time * 5 + relay.id) * 1.1, 0, Math.PI * 2); ctx.fill();
-    }
-  }
-
-  drawSaw(ctx, saw) {
-    const cx = saw.x + saw.w / 2; const cy = saw.y + saw.h / 2;
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(saw.angle);
-    const metal = ctx.createLinearGradient(-24, -24, 24, 24);
-    metal.addColorStop(0, '#d2d5cf'); metal.addColorStop(.42, '#465052'); metal.addColorStop(1, '#111719');
-    ctx.beginPath();
-    for (let i = 0; i < 24; i++) {
-      const angle = i * Math.PI / 12;
-      const radius = i % 2 === 0 ? 26 : 18;
-      const x = Math.cos(angle) * radius; const y = Math.sin(angle) * radius;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.closePath(); ctx.fillStyle = metal; ctx.fill();
-    ctx.strokeStyle = 'rgba(225,232,224,.45)'; ctx.lineWidth = 1.4; ctx.stroke();
-    ctx.fillStyle = '#090e11'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#aeb9b2'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.stroke();
-    ctx.restore();
-    ctx.fillStyle = 'rgba(0,0,0,.38)'; ctx.fillRect(saw.minX, saw.y + saw.h + 2, saw.maxX - saw.minX + saw.w, 3);
   }
 
   drawObjects(ctx, world) {
@@ -350,73 +276,33 @@ export class Renderer {
     ctx.restore();
   }
 
-  drawStalker(ctx, stalker) {
-    const x = stalker.x; const y = stalker.y;
-    const bob = Math.sin(stalker.phase) * (stalker.alert ? 2.5 : 1.5);
-    ctx.save();
-    ctx.translate(x + stalker.w / 2, y + stalker.h);
-    ctx.scale(stalker.dir || 1, 1);
-    ctx.shadowColor = stalker.alert ? 'rgba(142,12,22,.55)' : 'rgba(0,0,0,.4)';
-    ctx.shadowBlur = stalker.alert ? 20 : 8;
-    ctx.fillStyle = '#050709';
-    // Low, elongated body with a hunched shoulder mass.
-    ctx.beginPath(); ctx.moveTo(-40, -21 + bob); ctx.quadraticCurveTo(-34, -61, 4, -55 + bob); ctx.quadraticCurveTo(35, -57, 42, -23); ctx.lineTo(32, -7); ctx.lineTo(-35, -7); ctx.closePath(); ctx.fill();
-    // Jaw and skull silhouette.
-    ctx.beginPath(); ctx.ellipse(28, -49 + bob, 19, 15, -.25, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.moveTo(34, -42 + bob); ctx.lineTo(51, -30); ctx.lineTo(37, -28); ctx.closePath(); ctx.fill();
-    // Four long limbs and hooked claws.
-    ctx.strokeStyle = '#06090b'; ctx.lineWidth = 8; ctx.lineCap = 'round';
-    for (let i = 0; i < 4; i++) {
-      const offset = -28 + i * 18;
-      const stride = Math.sin(stalker.phase + i * 1.8) * 5;
-      ctx.beginPath(); ctx.moveTo(offset, -24 + bob); ctx.lineTo(offset + stride, -8); ctx.lineTo(offset + stride + 5, 0); ctx.stroke();
-    }
-    // A pair of dim eyes becomes visible as it notices the player.
-    ctx.shadowColor = '#c5222d'; ctx.shadowBlur = stalker.alert ? 18 : 5;
-    ctx.fillStyle = stalker.alert ? '#f04b50' : '#7c2328';
-    ctx.beginPath(); ctx.ellipse(38, -52 + bob, 3.5, 2.2, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(28, -54 + bob, 3, 2, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-  }
-
   drawPlayer(ctx, p) {
     const cx = p.x + p.w / 2;
-    const climbing = !!p.climbing;
-    const crouched = !!p.crouching;
-    const run = Math.abs(p.vx) > 15 && p.grounded && !crouched;
+    const run = Math.abs(p.vx) > 15 && p.grounded;
     const stride = run ? Math.sin(p.anim) * 10 : 0;
     const bob = run ? Math.abs(Math.sin(p.anim * 2)) * 2 : 0;
     ctx.save();
     ctx.translate(cx, p.y + p.h);
     ctx.scale(p.facing, 1);
     ctx.globalAlpha = p.invulnerable > 0 && Math.floor(p.invulnerable * 12) % 2 ? .35 : 1;
-    ctx.fillStyle = 'rgba(0,0,0,.48)'; ctx.beginPath(); ctx.ellipse(0, 2, crouched ? 15 : 21, 5, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.shadowColor = 'rgba(203,215,213,.25)'; ctx.shadowBlur = 8;
-    ctx.fillStyle = '#070a0c'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#080b0d'; ctx.lineWidth = crouched ? 7 : 8;
-    if (crouched) {
-      ctx.beginPath(); ctx.moveTo(-2, -15); ctx.lineTo(-11, -4); ctx.lineTo(-13, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(5, -15); ctx.lineTo(10, -5); ctx.lineTo(13, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-9, -31); ctx.quadraticCurveTo(-13, -22, -7, -14); ctx.lineTo(10, -14); ctx.quadraticCurveTo(15, -22, 8, -32); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.arc(4, -35, 8, 0, Math.PI * 2); ctx.fill();
-    } else if (climbing) {
-      ctx.beginPath(); ctx.moveTo(-4, -19); ctx.lineTo(-13, -8); ctx.lineTo(-8, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(4, -19); ctx.lineTo(12, -9); ctx.lineTo(8, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-8, -47); ctx.quadraticCurveTo(-13, -36, -8, -22); ctx.lineTo(9, -22); ctx.quadraticCurveTo(12, -37, 7, -48); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, -54, 9.4, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = '#080b0d'; ctx.lineWidth = 6;
-      ctx.beginPath(); ctx.moveTo(-7, -42); ctx.lineTo(-17, -55); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(7, -42); ctx.lineTo(16, -64); ctx.stroke();
-    } else {
-      ctx.beginPath(); ctx.moveTo(-3, -21 - bob); ctx.lineTo(-5 + stride, -5); ctx.lineTo(-8 + stride, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(4, -21 - bob); ctx.lineTo(6 - stride, -6); ctx.lineTo(9 - stride, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-8, -48 - bob); ctx.quadraticCurveTo(-13, -37, -8, -23); ctx.lineTo(9, -22); ctx.quadraticCurveTo(12, -38, 7, -49); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, -55 - bob, 9.4, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#202729'; ctx.beginPath(); ctx.moveTo(-8, -47 - bob); ctx.lineTo(8, -47 - bob); ctx.lineTo(4, -42 - bob); ctx.lineTo(-6, -43 - bob); ctx.fill();
-      ctx.strokeStyle = '#080b0d'; ctx.lineWidth = 6;
-      ctx.beginPath(); ctx.moveTo(-7, -43 - bob); ctx.lineTo(-12 - stride * .45, -29); ctx.lineTo(-9 - stride * .8, -21); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(7, -43 - bob); ctx.lineTo(12 + stride * .45, -31); ctx.lineTo(14 + stride * .8, -25); ctx.stroke();
-    }
+    ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.ellipse(0, 2, 21, 5, 0, 0, Math.PI * 2); ctx.fill();
+    // A very subtle cold rim separates the silhouette from the forest.
+    ctx.shadowColor = 'rgba(203,215,213,.22)'; ctx.shadowBlur = 7;
+    ctx.fillStyle = '#070a0c';
+    // Legs
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#080b0d'; ctx.lineWidth = 8;
+    ctx.beginPath(); ctx.moveTo(-3, -21 - bob); ctx.lineTo(-5 + stride, -5); ctx.lineTo(-8 + stride, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(4, -21 - bob); ctx.lineTo(6 - stride, -6); ctx.lineTo(9 - stride, 0); ctx.stroke();
+    // Body and head
+    ctx.beginPath(); ctx.moveTo(-8, -48 - bob); ctx.quadraticCurveTo(-13, -37, -8, -23); ctx.lineTo(9, -22); ctx.quadraticCurveTo(12, -38, 7, -49); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -55 - bob, 9.4, 0, Math.PI * 2); ctx.fill();
+    // Neck scarf / collar detail, still within the monochrome silhouette.
+    ctx.fillStyle = '#202729'; ctx.beginPath(); ctx.moveTo(-8, -47 - bob); ctx.lineTo(8, -47 - bob); ctx.lineTo(4, -42 - bob); ctx.lineTo(-6, -43 - bob); ctx.fill();
+    // Arms swing naturally.
+    ctx.strokeStyle = '#080b0d'; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(-7, -43 - bob); ctx.lineTo(-12 - stride * .45, -29); ctx.lineTo(-9 - stride * .8, -21); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(7, -43 - bob); ctx.lineTo(12 + stride * .45, -31); ctx.lineTo(14 + stride * .8, -25); ctx.stroke();
     ctx.restore();
   }
 

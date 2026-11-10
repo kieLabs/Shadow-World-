@@ -30,9 +30,7 @@ const ui = {
   worldName: document.querySelector('#worldName'),
   progress: document.querySelector('#progressFill'),
   progressLabel: document.querySelector('#progressLabel'),
-  footerChapter: document.querySelector('#footerChapter'),
   touchControls: document.querySelector('#touchControls'),
-  touchPauseBtn: document.querySelector('#touchPauseBtn'),
   hint: document.querySelector('#controlHint')
 };
 
@@ -63,20 +61,20 @@ ui.soundBtn.textContent = game.soundOn ? '♪' : '×';
 class InputController {
   constructor() {
     this.keys = new Set();
-    this.touch = { left: false, right: false, up: false, down: false, jump: false, interact: false };
+    this.touch = { left: false, right: false, jump: false, interact: false };
     this.jumpPressed = false;
     this.interactPressed = false;
     window.addEventListener('keydown', e => {
       const key = e.key.toLowerCase();
-      if (['arrowleft', 'arrowright', 'arrowup', 'arrowdown', ' ', 'w', 's'].includes(key)) e.preventDefault();
-      if (!this.keys.has(key) && key === ' ') this.jumpPressed = true;
+      if (['arrowleft', 'arrowright', 'arrowup', ' ', 'arrowdown'].includes(key)) e.preventDefault();
+      if (!this.keys.has(key) && (key === ' ' || key === 'arrowup' || key === 'w')) this.jumpPressed = true;
       if (!this.keys.has(key) && key === 'e') this.interactPressed = true;
       this.keys.add(key);
       if ((key === 'escape' || key === 'p') && game.state === 'playing') pauseGame();
       else if ((key === 'escape' || key === 'p') && game.state === 'paused') resumeGame();
     }, { passive: false });
     window.addEventListener('keyup', e => this.keys.delete(e.key.toLowerCase()));
-    window.addEventListener('blur', () => { this.keys.clear(); this.touch = { left: false, right: false, up: false, down: false, jump: false, interact: false }; });
+    window.addEventListener('blur', () => { this.keys.clear(); this.touch = { left: false, right: false, jump: false, interact: false }; });
 
     this.pointerControls = new Map();
     document.querySelectorAll('[data-control]').forEach(button => {
@@ -84,7 +82,6 @@ class InputController {
       button.addEventListener('pointerdown', e => {
         e.preventDefault();
         this.pointerControls.set(e.pointerId, control);
-        try { button.setPointerCapture(e.pointerId); } catch (_) { /* capture is optional */ }
         this.touch[control] = true;
         if (control === 'jump') this.jumpPressed = true;
         if (control === 'interact') this.interactPressed = true;
@@ -100,18 +97,15 @@ class InputController {
     };
     window.addEventListener('pointerup', releasePointer);
     window.addEventListener('pointercancel', releasePointer);
-    window.addEventListener('lostpointercapture', releasePointer);
-    window.addEventListener('blur', () => { this.pointerControls.clear(); this.touch = { left: false, right: false, up: false, down: false, jump: false, interact: false }; });
+    window.addEventListener('blur', () => { this.pointerControls.clear(); this.touch = { left: false, right: false, jump: false, interact: false }; });
   }
 
   read() {
     const left = this.keys.has('arrowleft') || this.keys.has('a') || this.touch.left;
     const right = this.keys.has('arrowright') || this.keys.has('d') || this.touch.right;
-    const up = this.keys.has('arrowup') || this.keys.has('w') || this.touch.up;
-    const down = this.keys.has('arrowdown') || this.keys.has('s') || this.touch.down;
-    const jump = this.keys.has(' ') || this.touch.jump;
+    const jump = this.keys.has(' ') || this.keys.has('arrowup') || this.keys.has('w') || this.touch.jump;
     const interact = this.keys.has('e') || this.touch.interact;
-    const result = { left, right, up, down, jump, jumpPressed: this.jumpPressed, interact, interactPressed: this.interactPressed };
+    const result = { left, right, jump, jumpPressed: this.jumpPressed, interact, interactPressed: this.interactPressed };
     this.jumpPressed = false;
     this.interactPressed = false;
     return result;
@@ -132,14 +126,13 @@ function persist() {
 }
 
 function newRun(level = 1, spawnX = 80) {
-  game.currentLevel = Math.max(1, Math.min(40, level));
+  game.currentLevel = Math.max(1, Math.min(100, level));
   game.world = createWorld(game.currentLevel);
-  renderer.cameraX = 0;
   game.checkpoint = spawnX;
   game.player = new Player(spawnX, game.world.floorY);
   game.drownTimer = 0;
   game.deathTimer = 0;
-  game.toast = `CHAPTER ${game.currentLevel} — ${game.world.chapterTitle}`;
+  game.toast = `LEVEL ${game.currentLevel} — ${game.world.worldName}`;
   game.toastTimer = 3.2;
   game.startedAt = performance.now();
 }
@@ -204,8 +197,6 @@ function die() {
 }
 
 function showDeath() {
-  const deathEyebrow = ui.death.querySelector('.eyebrow');
-  if (deathEyebrow) deathEyebrow.lastChild.textContent = ` ${game.world.worldName} CLAIMS ANOTHER`;
   game.state = 'dead';
   showOnly(ui.death);
   persist();
@@ -214,18 +205,10 @@ function showDeath() {
 function win() {
   if (game.state !== 'playing') return;
   const nextBtn = ui.nextLevelBtn;
-  const completeTitle = ui.complete.querySelector('h2');
-  const completeEyebrow = ui.complete.querySelector('.eyebrow');
-  const completeCopy = ui.complete.querySelector('.dialog-panel > p');
-  const completeBadge = ui.complete.querySelector('.chapter-complete');
-  if (completeTitle) completeTitle.innerHTML = game.currentLevel >= 40 ? 'THE END<br><em>OF THE VEIL</em>' : 'CHAPTER<br><em>SURVIVED</em>';
-  if (completeEyebrow) completeEyebrow.lastChild.textContent = ` CHAPTER ${String(game.currentLevel).padStart(2, '0')} COMPLETE`;
-  if (completeCopy) completeCopy.textContent = game.currentLevel >= 40 ? 'The darkness has a name. You finally know it.' : 'The silence moves with you. The next passage is worse.';
-  if (completeBadge) completeBadge.innerHTML = `${game.world.chapterTitle.toUpperCase()} <span>✓</span>`;
-  if (nextBtn) nextBtn.textContent = game.currentLevel >= 40 ? 'THE END — RETURN TO MENU' : `ENTER CHAPTER ${game.currentLevel + 1}  ↗`;
+  if (nextBtn) nextBtn.textContent = game.currentLevel >= 100 ? 'THE END — RETURN TO MENU' : `ENTER LEVEL ${game.currentLevel + 1}  ↗`;
   game.state = 'complete';
-  game.completed = game.currentLevel >= 40;
-  game.unlockedLevel = Math.min(40, Math.max(game.unlockedLevel, game.currentLevel + 1));
+  game.completed = game.currentLevel >= 100;
+  game.unlockedLevel = Math.min(100, Math.max(game.unlockedLevel, game.currentLevel + 1));
   audio.complete();
   showOnly(ui.complete);
   persist();
@@ -247,9 +230,7 @@ function update(dt) {
   if (game.state !== 'playing') return;
 
   const controls = input.read();
-  const gateWasOpen = game.world.gate.open;
   updateWorld(game.world, dt, game.player);
-  if (!gateWasOpen && game.world.gate.open) setToast('THE FINAL GATE HAS OPENED');
   game.player.update(dt, controls, game.world, audio);
   const playerBounds = game.player.bounds;
   for (const spider of game.world.spiders) {
@@ -261,15 +242,6 @@ function update(dt) {
   }
   for (const branch of game.world.branches) {
     if (!branch.landed && branch.warning <= 0 && branch.y > branch.baseY + 45 && aabbOverlap(playerBounds, { x: branch.x + 5, y: branch.y, w: 80, h: 18 })) die();
-  }
-  for (const stalker of game.world.stalkers) {
-    if (aabbOverlap(playerBounds, { x: stalker.x + 8, y: stalker.y + 7, w: stalker.w - 16, h: stalker.h - 8 })) die();
-  }
-  for (const saw of game.world.saws) {
-    if (aabbOverlap(playerBounds, { x: saw.x + 5, y: saw.y + 4, w: saw.w - 10, h: saw.h - 7 })) die();
-  }
-  for (const tunnel of game.world.tunnels) {
-    if (!game.player.crouching && aabbOverlap(playerBounds, tunnel)) die();
   }
   if (game.player.y > 620) die();
 
@@ -292,30 +264,22 @@ function update(dt) {
     }
   }
 
-  if (controls.interactPressed) {
-    const nearSwitch = game.world.switches.find(item => !item.activated && Math.abs((game.player.x + game.player.w / 2) - (item.x + item.w / 2)) < 86 && Math.abs((game.player.y + game.player.h / 2) - (item.y + item.h / 2)) < 78);
-    if (nearSwitch) {
-      nearSwitch.activated = true;
-      audio.interact();
-      setToast(`SIGNAL RELAY ${nearSwitch.id + 1} RESTORED`);
-    } else if (Math.abs(game.player.x - game.world.crate.x) < 110) {
-      audio.interact();
-      setToast(game.world.plate.active ? 'THE WEIGHT IS IN PLACE' : 'PUSH THE TIMBER CRATE ONTO THE PRESSURE PLATE');
-    }
+  if (controls.interactPressed && Math.abs(game.player.x - game.world.crate.x) < 110) {
+    audio.interact();
+    setToast(game.world.plate.active ? 'THE WEIGHT HAS OPENED THE WAY' : 'SOMEWHERE A STONE PLATE WAITS FOR WEIGHT');
   }
+  if (game.world.plate.active && !game.world.gate.open) {
+    game.world.gate.open = true;
+    setToast('THE IRON GATE HAS AWAKENED');
+  }
+
   if (game.world.gate.open && aabbOverlap(playerBounds, game.world.exit)) win();
   const progress = clamp(game.player.x / game.world.width * 100, 0, 100);
   ui.progress.style.width = `${progress}%`;
   ui.progressLabel.textContent = `${Math.floor(progress)}%`;
   if (ui.levelNumber) ui.levelNumber.textContent = String(game.currentLevel).padStart(2, '0');
   if (ui.worldName) ui.worldName.textContent = game.world.worldName;
-  if (ui.footerChapter) ui.footerChapter.innerHTML = `CHAPTER ${String(game.currentLevel).padStart(2, '0')} <b> / 40</b>`;
-  const remainingRelays = game.world.switches.filter(item => !item.activated).length;
-  ui.objective.textContent = !game.world.plate.active
-    ? 'Push the timber crate onto the pressure plate.'
-    : remainingRelays > 0
-      ? `Climb the ladders, stand by each red relay and press E (${remainingRelays} left).`
-      : `All paths are open. Reach the exit — Chapter ${game.currentLevel}/40.`;
+  ui.objective.textContent = game.world.gate.open ? `Survive the nightmare. Reach the exit — Level ${game.currentLevel}/100.` : 'Push the timber crate onto the pressure plate, then survive the passage.';
   if (performance.now() - game.lastSaveAt > 8000) {
     game.lastSaveAt = performance.now();
     persist();
@@ -323,15 +287,14 @@ function update(dt) {
 }
 
 ui.startBtn.addEventListener('click', startNew);
-ui.nextLevelBtn?.addEventListener('click', () => { if (game.currentLevel >= 40) { game.state = 'menu'; showOnly(ui.menu); return; } newRun(game.currentLevel + 1); game.unlockedLevel = Math.max(game.unlockedLevel, game.currentLevel); game.state = 'playing'; showOnly(null); persist(); });
+ui.nextLevelBtn?.addEventListener('click', () => { if (game.currentLevel >= 100) { game.state = 'menu'; showOnly(ui.menu); return; } newRun(game.currentLevel + 1); game.unlockedLevel = Math.max(game.unlockedLevel, game.currentLevel); game.state = 'playing'; showOnly(null); persist(); });
 if (ui.restartBtn) ui.restartBtn.addEventListener('click', startNew);
 ui.retryBtn.addEventListener('click', () => { newRun(game.currentLevel, game.checkpoint); game.state = 'playing'; showOnly(null); });
 ui.continueBtn.addEventListener('click', continueRun);
 ui.resumeBtn.addEventListener('click', resumeGame);
 ui.pauseBtn.addEventListener('click', pauseGame);
-ui.touchPauseBtn?.addEventListener('click', pauseGame);
 ui.resetBtn.addEventListener('click', () => {
-  clearSave(); game.checkpoint = 80; game.unlockedLevel = 1; game.bestProgress = 0; game.completed = false; newRun(1); game.state = 'playing'; showOnly(null); persist();
+  clearSave(); game.checkpoint = 80; game.bestProgress = 0; game.completed = false; newRun(1); game.state = 'playing'; showOnly(null); persist();
 });
 
 function toggleSound() {
@@ -350,7 +313,7 @@ function frame(time) {
   const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.035) : 0;
   lastTime = time;
   update(dt);
-  if (!game.player) game.player = new Player(80, game.world.floorY);
+  if (!game.player) game.player = new Player(spawnX, game.world.floorY);
   renderer.render(game);
   requestAnimationFrame(frame);
 }
