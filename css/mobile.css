@@ -105,15 +105,15 @@
   .progress-wrap { padding-top: 5px; }
   .touch-controls.active {
     display: flex; position: fixed; left: 0; right: 0;
-    bottom: max(8px, calc(env(safe-area-inset-bottom) + 6px));
-    height: 62px; padding: 0 22px; margin: 0;
+    bottom: max(14px, calc(env(safe-area-inset-bottom) + 10px));
+    height: 82px; padding: 0 22px; margin: 0;
     align-items: center; justify-content: space-between;
     z-index: 20; pointer-events: none;
   }
-  .move-pad, .action-pad { gap: 9px; }
-  .direction { width: 48px; height: 48px; font-size: 29px; }
-  .jump { width: 54px; height: 54px; font-size: 27px; }
-  .interact { width: 40px; height: 40px; font-size: 12px; }
+  .move-pad, .action-pad { gap: 14px; }
+  .direction { width: 66px; height: 66px; font-size: 42px; }
+  .jump { width: 76px; height: 76px; font-size: 36px; }
+  .interact { width: 58px; height: 58px; font-size: 17px; }
   .touch-button { border-width: 2px; background: rgba(14,22,25,.88); box-shadow: 0 4px 20px rgba(0,0,0,.45); }
   .control-hint { display: none; }
 }
