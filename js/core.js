@@ -16,10 +16,11 @@ export function aabbOverlap(a, b) {
 }
 
 export function makeSaveData(data = {}) {
-  const checkpoint = Number.isFinite(data.checkpoint) ? clamp(data.checkpoint, 0, 1800) : 80;
+  const checkpoint = Number.isFinite(data.checkpoint) ? clamp(data.checkpoint, 1, 40) : 1;
   return {
-    version: 1,
+    version: 3,
     checkpoint,
+    unlockedLevel: clamp(Number(data.unlockedLevel) || checkpoint, 1, 40),
     bestProgress: clamp(Number(data.bestProgress) || 0, 0, 100),
     soundOn: data.soundOn !== false,
     completed: data.completed === true
