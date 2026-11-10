@@ -1,11 +1,11 @@
 {
   "name": "shadow-world-gamerkie",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "A cinematic 2D puzzle-platformer prototype by GamerKie.",
+  "description": "A cinematic 40-chapter horror puzzle-platformer by GamerKie.",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check js/main.js && node --check js/player.js && node --check js/world.js && node --check js/renderer.js"
+    "check": "node --check js/main.js && node --check js/input.js && node --check js/player.js && node --check js/world.js && node --check js/renderer.js"
   }
 }
