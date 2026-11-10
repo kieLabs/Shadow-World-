@@ -2,71 +2,61 @@
 
 **Tagline:** Enter the Darkness. Find the Truth.
 
-An original, cinematic 2D horror puzzle-platform adventure. This edition is built around **40 long chapters across eight distinct regions**. Each chapter is a wide side-scrolling journey with environmental puzzles, vertical routes, lethal hazards, checkpoints, and a gate that requires both weight and restored signal relays.
+A mobile-friendly, cinematic 2D puzzle-platformer prototype. The first playable chapter is **The Forgotten Forest**. It uses an original monochrome environment, a silhouette hero, a patrolling spider, a falling branch trap, a pushable timber crate, a weight plate, an iron gate, a checkpoint, and a short swimming passage.
 
-SHADOW WORLD draws on the broad atmospheric puzzle-platformer genre. It does not copy LIMBO's characters, level layouts, story, artwork, sound, or other proprietary material.
+> This is Chapter 01 / the first playable demo, not the finished eight-world, 80-level game. The project is structured so more chapters, puzzles, enemies, and story sequences can be added without replacing the core game.
 
-## The 40-chapter campaign
+## Play
 
-| Region | Chapters | Atmosphere |
-|---|---:|---|
-| Hollowwood: The First Silence | 01–05 | Dead forest, root tunnels, falling trunks, distant eyes |
-| Drowned Hamlet: Below the Bells | 06–10 | Sunken village, flooded rooms, submerged passages |
-| Mire of Teeth: The Living Bog | 11–15 | Black water, crawling nests, unstable ground |
-| The Underdeep: No Way Back | 16–20 | Vertical shafts, bone tunnels, buried structures |
-| Ironworks: The Hungering Machine | 21–25 | Crushers, moving saws, steel walkways, furnace light |
-| Blackglass Lab: Subject Zero | 26–30 | Red warning lights, containment corridors, failed experiments |
-| The Sunken Crown: City of Ash | 31–35 | Ruined towers, broken bridges, flooded cathedral |
-| The Last Veil: The Heart Below | 36–40 | Deep red skies, final descent, the source of the signal |
+Open `index.html` in a modern browser, or publish the folder as a static site.
 
-Every chapter is generated from a fixed chapter seed so its obstacle layout stays consistent on replay. Routes are longer than the previous prototype and increase in hazard density and complexity as the campaign progresses. Chapters include spikes and pits, patrolling crawlers, hunting shadow-stalkers, falling branches, moving saws, low-clearance tunnels, climbable ladders, elevated ledges, signal relays, pressure plates, and checkpoints.
+### Controls
 
-## Controls
-
-| Action | Keyboard | Mobile landscape |
+| Action | Keyboard | Mobile |
 |---|---|---|
-| Move left/right | A / D or ← / → | LEFT / RIGHT |
-| Climb up | W or ↑ near a ladder | UP |
-| Climb down | S or ↓ near a ladder | DOWN |
-| Crouch under low beams | Hold S or ↓ on the ground | Hold DOWN |
-| Jump | Space | JUMP |
-| Swim upward | Hold Space or UP in water | Hold JUMP or UP |
-| Interact / activate relay | E | E |
-| Pause | Esc or P | Ⅱ |
+| Move | A / D or ← / → | Left / right buttons |
+| Jump / swim upward | Space / W / ↑ | Up button |
+| Interact / remember checkpoint | E | E button |
+| Pause / resume | Esc or P | Pause icon |
 
-To climb, stand close to a ladder and hold **UP**. Hold **DOWN** to descend. Away from a ladder, holding **DOWN** makes the character crouch so the low tunnels can be crossed. On a ladder, horizontal movement detaches the character from it. The JUMP button is separate from UP/DOWN.
-
-## Chapter objectives
-
-1. Push the timber crate onto the pressure plate.
-2. Find the raised platforms and use each ladder to reach the signal relays.
-3. Stand beside a relay and press E to restore it.
-4. Avoid the hazards and reach the final gate. The exit opens only after the plate and all relays are active.
-5. Cross checkpoints to set a safer retry point.
+Push the timber crate onto the pressure plate to raise the iron gate. Jump over the spike bed and avoid the spider and falling branch. Use repeated jumps to swim through the flooded passage. Checkpoints are saved automatically in browser local storage.
 
 ## GitHub Pages deployment
 
-1. Extract the ZIP file.
-2. Open the `shadow-world` folder.
-3. Upload the **contents** of `shadow-world` to the root of your GitHub repository. `index.html` must be at the repository root.
-4. Open **Settings → Pages**. Select **Deploy from a branch**, branch `main`, folder `/ (root)`, and save.
-5. Open the published Pages URL after the deployment succeeds.
+1. Create a GitHub repository named `shadow-world` (or another name you prefer).
+2. Upload the **contents of this folder**, not the outer ZIP file. Keep `index.html` in the repository root.
+3. In GitHub, open **Settings → Pages**.
+4. Under **Build and deployment**, choose **Deploy from a branch**.
+5. Select branch `main` and folder `/ (root)`, then save.
+6. Wait for GitHub Pages to publish. The game URL will look like `https://YOUR-USERNAME.github.io/shadow-world/`.
 
-No backend, API key, framework, build step, or npm install is needed to play the static game.
+No backend, API key, database, build step, or npm install is required for GitHub Pages. `npm test` is only needed when you want to run the included local logic tests.
 
-## Blogger iframe
+## Blogger embed
 
-Use the code in `blogger-embed.html` after replacing the example GitHub Pages URL with the URL of your published game.
+After GitHub Pages is live, add this iframe to a Blogger HTML post. Replace the example URL with your own published game URL.
+
+```html
+<div style="width:100%;max-width:1100px;margin:0 auto;aspect-ratio:16/9;background:#080c0f;overflow:hidden">
+  <iframe
+    src="https://YOUR-USERNAME.github.io/shadow-world/"
+    title="SHADOW WORLD — GamerKie"
+    loading="lazy"
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    style="width:100%;height:100%;border:0;display:block">
+  </iframe>
+</div>
+```
 
 ## Project structure
 
 ```text
-shadow-world/
+SHADOW-WORLD/
 ├── index.html
 ├── package.json
 ├── README.md
 ├── .nojekyll
-├── blogger-embed.html
 ├── assets/
 │   ├── audio/README.txt
 │   ├── backgrounds/README.txt
@@ -83,28 +73,33 @@ shadow-world/
 │   ├── save.js
 │   └── world.js
 └── tests/
-    ├── core.test.js
-    ├── player.test.js
-    └── world.test.js
+    └── core.test.js
 ```
 
 ## Technical notes
 
-- Rendering: HTML5 Canvas 2D, layered parallax, biome palettes, fog, moonlight, surface textures, shadows, glowing relay devices, metallic ladders, and moving saws.
-- Physics: custom 2D platform physics with jump buffering, coyote time, ladder climbing, crouching, swimming, and collision checks.
-- Controls: touch pointers are tracked independently, so simultaneous left/right and jump inputs work. Six mobile actions are available: left, right, up, down, jump, and interact; a pause control is also provided.
-- Progress: chapter unlocks and sound preference are stored in localStorage on the current browser/device. Progress does not sync automatically between devices.
-- Audio: Web Audio API-generated effects. The browser requires a user gesture before sound can start.
+- Rendering: HTML5 Canvas 2D with layered procedural art, parallax silhouettes, fog, lighting, water, and vignette.
+- Physics: lightweight custom 2D platform physics and AABB collisions. This keeps the demo self-contained and avoids loading a remote game engine at runtime.
+- Audio: Web Audio API-generated sound effects; the browser may require the first user tap/click to unlock audio.
+- Save data: local storage on the device/browser. Progress does not automatically sync between devices.
+- Network: Google Fonts is an optional visual enhancement; system fonts are used as fallbacks. Gameplay itself has no external runtime dependency.
 
-## Local verification
+## Local checks
 
 ```bash
 npm test
 npm run check
 ```
 
-The tests cover campaign size, region assignment, gate requirements, branch warnings, ladder ascent/descent, crouching, core collision helpers, and save-data normalization.
+The included tests cover collision overlap, value clamping, movement easing, and save-data normalization.
 
-## Visual style
+## Originality
 
-The game uses original, procedurally rendered silhouettes and cinematic environmental effects. The visuals are stylized 2D art rather than scanned photorealistic assets or 3D models; the goal is a darker, more layered, atmospheric presentation while keeping the game fast and self-contained for GitHub Pages and Blogger.
+SHADOW WORLD is an original GamerKie project inspired by the broad atmospheric puzzle-platformer genre. It does not use LIMBO's characters, levels, artwork, music, story, or other proprietary assets.
+
+
+## 100-level campaign update
+
+The campaign now generates 100 level layouts across eight horror biomes. Each level has a longer side-scrolling route, increasing hazard density, moving spiders, falling-branch traps with warning time, spike beds, pits, raised stepping stones, checkpoints, a pressure-plate gate puzzle, and an exit. Progress unlocks the next level and is saved locally in the browser. Mobile touch controls use independent pointer tracking so simultaneous movement and jump inputs work; landscape button sizes have been reduced.
+
+The level layouts are deterministic per level number, so a given level has the same obstacle arrangement on each replay.
