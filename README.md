@@ -32,7 +32,7 @@ Every chapter is generated from a fixed chapter seed so its obstacle layout stay
 | Jump | Space | JUMP |
 | Swim upward | Hold Space or UP in water | Hold JUMP or UP |
 | Interact / activate relay | E | E |
-| Pause | Esc or P | Ⅱ |
+| Pause | Esc or P | Ⅱ (same-sized mobile control) |
 
 To climb, stand close to a ladder and hold **UP**. Hold **DOWN** to descend. Away from a ladder, holding **DOWN** makes the character crouch so the low tunnels can be crossed. On a ladder, horizontal movement detaches the character from it. The JUMP button remains available as the main jump control. UP is also a one-press jump shortcut when you are not aligned with a ladder. UP/DOWN can be held together with LEFT/RIGHT or JUMP.
 
@@ -76,6 +76,7 @@ shadow-world/
 │   └── mobile.css
 ├── js/
 │   ├── audio.js
+│   ├── canvas-utils.js
 │   ├── core.js
 │   ├── main.js
 │   ├── player.js
@@ -90,9 +91,9 @@ shadow-world/
 
 ## Technical notes
 
-- Rendering: HTML5 Canvas 2D, layered parallax, biome palettes, fog, moonlight, surface textures, shadows, glowing relay devices, metallic ladders, and moving saws.
+- Rendering: HTML5 Canvas 2D, layered parallax, biome palettes, fog, moonlight, surface textures, shadows, glowing relay devices, metallic ladders, and moving saws. Rounded paths include a fallback for browsers without the newer Canvas `roundRect()` method; unexpected graphics failures show a reload message instead of silently leaving a black screen.
 - Physics: custom 2D platform physics with jump buffering, coyote time, ladder climbing, crouching, swimming, and collision checks.
-- Controls: touch pointers are tracked independently, including pointer cancellation and focus-loss cleanup, so simultaneous movement and jump inputs work. UP jumps when no ladder is in reach and climbs when aligned with a ladder. Six mobile actions are available: left, right, up, down, jump, and interact; a pause control is also provided.
+- Controls: mobile movement, climb, interact, jump, and pause buttons use a consistent 42 px target size (38 px on very narrow screens) with a small, even gap. Touch pointers are tracked independently, including pointer cancellation and focus-loss cleanup, so simultaneous movement and jump inputs work. UP jumps when no ladder is in reach and climbs when aligned with a ladder. Six mobile actions are available: left, right, up, down, jump, and interact; a pause control is also provided.
 - Progress: chapter unlocks and sound preference are stored in localStorage on the current browser/device. Progress does not sync automatically between devices.
 - Audio: Web Audio API-generated effects. The browser requires a user gesture before sound can start.
 
@@ -103,7 +104,7 @@ npm test
 npm run check
 ```
 
-The tests cover campaign size, region assignment, gate requirements, branch warnings, ladder ascent/descent, crouching, core collision helpers, and save-data normalization.
+The tests cover Canvas rounded-path fallback and 40-chapter renderer compatibility, campaign size, region assignment, gate requirements, branch warnings, ladder ascent/descent, crouching, core collision helpers, and save-data normalization.
 
 ## Visual style
 

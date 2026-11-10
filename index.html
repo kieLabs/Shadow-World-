@@ -27,6 +27,11 @@
     <section class="game-frame" aria-label="Shadow World game">
       <div class="game-stage">
         <canvas id="gameCanvas" width="960" height="540" aria-label="Game scene. Use A/D to move, W/S or Up/Down to climb and crouch, Space to jump, and E to interact."></canvas>
+        <div id="runtimeError" class="runtime-error" role="alert" aria-live="assertive">
+          <strong>GAME DISPLAY STOPPED</strong>
+          <span id="runtimeErrorDetail">A graphics error interrupted the game.</span>
+          <button id="reloadGameBtn" type="button">RELOAD GAME</button>
+        </div>
 
         <div class="hud" aria-live="polite">
           <div class="hud-chapter"><span id="levelNumber">01</span><div><small>WORLD</small><strong id="worldName">THE FORGOTTEN FOREST</strong></div></div>
