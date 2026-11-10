@@ -20,3 +20,17 @@ test('the forest begins with a checkpoint, a spider, spikes, and a water crossin
   assert.equal(world.spikes.length, 1);
   assert.ok(world.water.w > 0);
 });
+
+test('a fallen branch becomes harmless on the ground and resets after its rest period', () => {
+  const world = createWorld();
+  const player = { x: 1010 };
+  updateWorld(world, 1 / 60, player);
+  assert.equal(world.branch.triggered, true);
+  for (let i = 0; i < 40; i++) updateWorld(world, 1 / 60, player);
+  assert.equal(world.branch.landed, true);
+  assert.equal(world.branch.y, world.floorY - 22);
+  player.x = 900; // leave the trigger zone before the trap resets
+  for (let i = 0; i < 140; i++) updateWorld(world, 1 / 60, player);
+  assert.equal(world.branch.triggered, false);
+  assert.equal(world.branch.y, world.branch.baseY);
+});
