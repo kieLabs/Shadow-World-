@@ -12,6 +12,9 @@
   .game-stage { width: 100%; aspect-ratio: 16 / 9; }
   .hud { height: 48px; padding: 8px 9px 0; grid-template-columns: 1fr 64px; gap: 6px; }
   .hud-chapter { display: none; }
+  .hud-chapter > span { font-size: 18px; }
+  .hud-chapter small, .objective small { font-size: 6px; margin-bottom: 2px; letter-spacing: 1px; }
+  .hud-chapter strong { font-size: 6px; letter-spacing: .5px; }
   .objective { grid-column: 1; justify-self: start; text-align: left; padding-top: 0; }
   .objective span { font-size: 7px; line-height: 1.3; display: block; }
   .objective small { display: none; }
@@ -36,18 +39,16 @@
   .dialog-panel > p { font-size: 8px; margin: 12px 0 15px; }
   .dialog-panel .primary-button { min-width: 0; }
   .chapter-complete { font-size: 6px; padding: 8px 0; }
-  .touch-controls { display: none; position: relative; height: 66px; align-items: center; justify-content: space-between; padding: 5px 9px 0; z-index: 20; pointer-events: none; }
+  .touch-controls { display: none; position: relative; height: 80px; align-items: center; justify-content: space-between; padding: 7px 9px 0; z-index: 3; pointer-events: none; }
   .touch-controls.active { display: flex; }
   .game-stage:has(#menuScreen.visible) .hud { visibility: hidden; }
-  .move-pad, .vertical-pad, .action-pad { display: flex; align-items: center; gap: 7px; pointer-events: auto; }
-  .vertical-pad { flex-direction: column; gap: 3px; }
-  .touch-button { display: grid; place-items: center; border: 1px solid rgba(200,215,207,.34); color: rgba(231,239,232,.9); background: rgba(16,25,28,.88); box-shadow: 0 4px 18px rgba(0,0,0,.38); border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none; padding: 0; }
-  .touch-button:active { background: rgba(177,194,184,.4); border-color: rgba(231,239,232,.75); }
-  .direction { width: 45px; height: 45px; font-size: 28px; line-height: 1; }
-  .vertical { width: 32px; height: 32px; font-size: 17px; line-height: 1; }
-  .jump { width: 51px; height: 51px; font-size: 9px; letter-spacing: .4px; font-weight: 900; border-color: rgba(220,232,222,.55); }
-  .interact { width: 37px; height: 37px; font-size: 11px; font-weight: 900; }
-  .touch-pause { display: grid; place-items: center; position: fixed; top: 7px; right: 7px; z-index: 22; pointer-events: auto; width: 30px; height: 28px; border: 1px solid rgba(210,225,218,.38); border-radius: 4px; color: #e6eee8; background: rgba(5,10,13,.82); font-size: 16px; }
+  .move-pad, .action-pad { display: flex; align-items: center; gap: 10px; pointer-events: auto; }
+  .action-pad { gap: 9px; }
+  .touch-button { display: grid; place-items: center; border: 1px solid rgba(200,215,207,.27); color: rgba(231,239,232,.82); background: rgba(23,32,35,.76); box-shadow: 0 4px 18px rgba(0,0,0,.25); border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .touch-button:active { background: rgba(177,194,184,.35); border-color: rgba(231,239,232,.6); }
+  .direction { width: 53px; height: 53px; font-size: 32px; line-height: 1; }
+  .jump { width: 61px; height: 61px; font-size: 28px; border-color: rgba(220,232,222,.48); }
+  .interact { width: 43px; height: 43px; font-size: 12px; font-weight: 800; }
   .footer-bar { margin-top: 3px; min-height: 20px; font-size: 6px; letter-spacing: .6px; }
   .footer-center { display: none; }
 }
@@ -55,12 +56,10 @@
 @media (max-width: 380px) {
   .chapter-label { display: none; }
   .app-shell { padding-left: 5px; padding-right: 5px; }
-  .touch-controls { height: 61px; padding-left: 5px; padding-right: 5px; }
-  .move-pad, .vertical-pad, .action-pad { gap: 5px; }
-  .direction { width: 40px; height: 40px; }
-  .vertical { width: 29px; height: 29px; }
-  .jump { width: 46px; height: 46px; }
-  .interact { width: 34px; height: 34px; }
+  .touch-controls { height: 72px; }
+  .direction { width: 48px; height: 48px; }
+  .jump { width: 56px; height: 56px; }
+  .interact { width: 39px; height: 39px; }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
@@ -68,23 +67,22 @@
   .app-shell { padding-top: 4px; }
   .topbar { min-height: 28px; padding-bottom: 4px; }
   .game-frame { padding-top: 4px; }
-  .touch-controls.active { display: flex; position: absolute; inset: auto 0 4px; height: 58px; padding: 0 14px; }
-  .move-pad, .vertical-pad, .action-pad { gap: 6px; }
-  .direction { width: 42px; height: 42px; font-size: 25px; }
-  .vertical { width: 31px; height: 31px; font-size: 15px; }
-  .jump { width: 48px; height: 48px; font-size: 9px; }
-  .interact { width: 34px; height: 34px; }
-  .touch-pause { top: 5px; right: 5px; }
+  .touch-controls.active { display: flex; position: absolute; inset: auto 0 4px; height: 64px; padding: 0 15px; }
+  .direction { width: 45px; height: 45px; }
+  .jump { width: 51px; height: 51px; }
+  .interact { width: 36px; height: 36px; }
   .footer-bar { display: none; }
 }
 
+
+/* Orientation prompt: shown only while a phone is held vertically. */
 .rotate-prompt { display: none; }
 @media (max-width: 900px) and (orientation: portrait) {
   .rotate-prompt {
     position: fixed; inset: 0; z-index: 30; display: flex;
     flex-direction: column; align-items: center; justify-content: center;
     gap: 12px; padding: 24px; text-align: center;
-    background: rgba(4,8,11,.96); color: #edf1eb;
+    background: rgba(4,8,11,.94); color: #edf1eb;
   }
   .rotate-icon { position: relative; font-size: 58px; line-height: 1; transform: rotate(90deg); color: #d7e0d9; }
   .rotate-icon b { position: absolute; right: -24px; top: -10px; font-size: 30px; color: #aebbb4; }
@@ -92,7 +90,9 @@
   .rotate-prompt small { color: #9eaaa4; font-size: 11px; letter-spacing: .5px; }
 }
 
-@media (max-width: 1100px) and (orientation: landscape) and (max-height: 600px) {
+/* Landscape gameplay uses the entire visible viewport. Controls are overlaid
+   inside the game stage and lifted above Android's bottom gesture area. */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 600px) {
   html, body { width: 100%; height: 100%; min-height: 100%; overflow: hidden; }
   body { display: block; }
   .app-shell { position: fixed; inset: 0; width: 100%; height: 100dvh; padding: 0; margin: 0; }
@@ -105,17 +105,15 @@
   .progress-wrap { padding-top: 5px; }
   .touch-controls.active {
     display: flex; position: fixed; left: 0; right: 0;
-    bottom: max(6px, calc(env(safe-area-inset-bottom) + 4px));
-    height: 56px; padding: 0 12px; margin: 0;
+    bottom: max(8px, calc(env(safe-area-inset-bottom) + 6px));
+    height: 62px; padding: 0 22px; margin: 0;
     align-items: center; justify-content: space-between;
     z-index: 20; pointer-events: none;
   }
-  .move-pad, .vertical-pad, .action-pad { gap: 6px; }
-  .direction { width: 42px; height: 42px; font-size: 25px; }
-  .vertical { width: 31px; height: 31px; font-size: 15px; }
-  .jump { width: 48px; height: 48px; font-size: 9px; }
-  .interact { width: 34px; height: 34px; font-size: 10px; }
-  .touch-button { border-width: 2px; background: rgba(14,22,25,.91); box-shadow: 0 4px 20px rgba(0,0,0,.48); }
-  .touch-pause { top: 5px; right: 6px; }
+  .move-pad, .action-pad { gap: 9px; }
+  .direction { width: 48px; height: 48px; font-size: 29px; }
+  .jump { width: 54px; height: 54px; font-size: 27px; }
+  .interact { width: 40px; height: 40px; font-size: 12px; }
+  .touch-button { border-width: 2px; background: rgba(14,22,25,.88); box-shadow: 0 4px 20px rgba(0,0,0,.45); }
   .control-hint { display: none; }
 }
