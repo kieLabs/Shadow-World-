@@ -131,7 +131,20 @@ function showOnly(screen) {
   ui.touchControls.classList.toggle('active', game.state === 'playing');
 }
 
+async function enterImmersiveMode() {
+  // Fullscreen/orientation lock must be requested from a user gesture.
+  try {
+    if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+      await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+    }
+  } catch (_) { /* Fullscreen may be blocked inside some browsers/iframes. */ }
+  try {
+    if (screen.orientation?.lock) await screen.orientation.lock('landscape');
+  } catch (_) { /* The rotate prompt remains available when locking is unsupported. */ }
+}
+
 function startNew() {
+  enterImmersiveMode();
   audio.unlock();
   newRun(80);
   game.state = 'playing';
@@ -141,6 +154,7 @@ function startNew() {
 }
 
 function continueRun() {
+  enterImmersiveMode();
   audio.unlock();
   newRun(game.checkpoint);
   game.state = 'playing';
@@ -210,7 +224,7 @@ function update(dt) {
   if (aabbOverlap(playerBounds, { x: spike.x + 3, y: spike.y + 5, w: spike.w - 6, h: spike.h })) die();
   if (aabbOverlap(playerBounds, spiderBounds)) die();
   const branch = game.world.branch;
-  if (branch.y > branch.baseY + 60 && aabbOverlap(playerBounds, { x: branch.x + 5, y: branch.y, w: 80, h: 18 })) die();
+  if (!branch.landed && branch.y > branch.baseY + 60 && aabbOverlap(playerBounds, { x: branch.x + 5, y: branch.y, w: 80, h: 18 })) die();
   if (game.player.y > 620) die();
 
   if (game.player.inWater && game.player.y > game.world.water.y + 10) game.drownTimer += dt;

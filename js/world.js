@@ -20,7 +20,7 @@ export function createWorld() {
     checkpoints: [850],
     exit: { x: 1888, y: floorY - 92, w: 32, h: 92 },
     time: 0,
-    branch: { x: 1080, y: 212, baseY: 212, triggered: false, timer: 0, angle: -0.08 },
+    branch: { x: 1080, y: 212, baseY: 212, triggered: false, landed: false, timer: 0, angle: -0.08 },
     particles: Array.from({ length: 60 }, (_, i) => ({
       x: (i * 173) % 1960,
       y: 80 + ((i * 97) % 350),
@@ -42,15 +42,26 @@ export function updateWorld(world, dt, player) {
   spider.x = Math.max(spider.minX, Math.min(spider.x, spider.maxX - spider.w));
   spider.alert = Math.abs((player.x + player.w / 2) - (spider.x + spider.w / 2)) < 150 ? 1 : 0;
 
-  // A heavy dead branch drops when the player enters its shadow.
-  if (!world.branch.triggered && player.x > 1000 && player.x < 1150) world.branch.triggered = true;
-  if (world.branch.triggered && world.branch.y < world.floorY - 22) {
-    world.branch.timer += dt;
-    world.branch.y += 520 * dt;
-  } else if (world.branch.triggered && world.branch.timer > 2.2) {
-    world.branch.y = world.branch.baseY;
-    world.branch.timer = 0;
-    world.branch.triggered = false;
+  // The branch is dangerous only while falling. Once it lands, it stays
+  // harmless on the ground briefly, then resets for the next attempt.
+  const branch = world.branch;
+  const branchLandingY = world.floorY - 22;
+  if (!branch.triggered && player.x > 1000 && player.x < 1150) {
+    branch.triggered = true;
+    branch.landed = false;
+    branch.timer = 0;
+  }
+  if (branch.triggered && !branch.landed) {
+    branch.y = Math.min(branchLandingY, branch.y + 520 * dt);
+    if (branch.y >= branchLandingY) branch.landed = true;
+  } else if (branch.triggered && branch.landed) {
+    branch.timer += dt;
+    if (branch.timer >= 2.2) {
+      branch.y = branch.baseY;
+      branch.timer = 0;
+      branch.triggered = false;
+      branch.landed = false;
+    }
   }
 
   for (const p of world.particles) {
