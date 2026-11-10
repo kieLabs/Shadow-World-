@@ -73,3 +73,47 @@
   .interact { width: 36px; height: 36px; }
   .footer-bar { display: none; }
 }
+
+
+/* Orientation prompt: shown only while a phone is held vertically. */
+.rotate-prompt { display: none; }
+@media (max-width: 900px) and (orientation: portrait) {
+  .rotate-prompt {
+    position: fixed; inset: 0; z-index: 30; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 24px; text-align: center;
+    background: rgba(4,8,11,.94); color: #edf1eb;
+  }
+  .rotate-icon { position: relative; font-size: 58px; line-height: 1; transform: rotate(90deg); color: #d7e0d9; }
+  .rotate-icon b { position: absolute; right: -24px; top: -10px; font-size: 30px; color: #aebbb4; }
+  .rotate-prompt strong { font: 800 20px 'Barlow Condensed', Impact, sans-serif; letter-spacing: 2px; }
+  .rotate-prompt small { color: #9eaaa4; font-size: 11px; letter-spacing: .5px; }
+}
+
+/* Landscape gameplay uses the entire visible viewport. Controls are overlaid
+   inside the game stage and lifted above Android's bottom gesture area. */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 600px) {
+  html, body { width: 100%; height: 100%; min-height: 100%; overflow: hidden; }
+  body { display: block; }
+  .app-shell { position: fixed; inset: 0; width: 100%; height: 100dvh; padding: 0; margin: 0; }
+  .topbar, .footer-bar { display: none !important; }
+  .game-frame { position: fixed; inset: 0; width: 100vw; height: 100dvh; padding: 0; margin: 0; }
+  .game-stage { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border: 0; box-shadow: none; }
+  #gameCanvas { width: 100%; height: 100%; }
+  .hud { height: 42px; padding: 7px 12px 0; grid-template-columns: 1fr minmax(110px, 1fr) 90px; gap: 8px; }
+  .objective span { font-size: 8px; }
+  .progress-wrap { padding-top: 5px; }
+  .touch-controls.active {
+    display: flex; position: fixed; left: 0; right: 0;
+    bottom: max(14px, calc(env(safe-area-inset-bottom) + 10px));
+    height: 82px; padding: 0 22px; margin: 0;
+    align-items: center; justify-content: space-between;
+    z-index: 20; pointer-events: none;
+  }
+  .move-pad, .action-pad { gap: 14px; }
+  .direction { width: 66px; height: 66px; font-size: 42px; }
+  .jump { width: 76px; height: 76px; font-size: 36px; }
+  .interact { width: 58px; height: 58px; font-size: 17px; }
+  .touch-button { border-width: 2px; background: rgba(14,22,25,.88); box-shadow: 0 4px 20px rgba(0,0,0,.45); }
+  .control-hint { display: none; }
+}
