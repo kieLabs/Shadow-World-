@@ -20,8 +20,8 @@ test('AABB collision requires positive area of intersection', () => {
 });
 
 test('save data is normalized and cannot contain invalid checkpoint values', () => {
-  assert.deepEqual(makeSaveData({ checkpoint: 5000, bestProgress: -2 }), {
-    version: 1, checkpoint: 1800, bestProgress: 0, soundOn: true, completed: false
+  assert.deepEqual(makeSaveData({ checkpoint: 5000, unlockedLevel: 5000, bestProgress: -2 }), {
+    version: 3, checkpoint: 40, unlockedLevel: 40, bestProgress: 0, soundOn: true, completed: false
   });
-  assert.equal(makeSaveData({ checkpoint: Number.NaN }).checkpoint, 80);
+  assert.equal(makeSaveData({ checkpoint: Number.NaN }).checkpoint, 1);
 });
