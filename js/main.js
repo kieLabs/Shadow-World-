@@ -34,7 +34,9 @@ const ui = {
   footerChapter: document.querySelector('#footerChapter'),
   touchControls: document.querySelector('#touchControls'),
   touchPauseBtn: document.querySelector('#touchPauseBtn'),
-  hint: document.querySelector('#controlHint')
+  hint: document.querySelector('#controlHint'),
+  runtimeError: document.querySelector('#runtimeError'),
+  reloadGameBtn: document.querySelector('#reloadGameBtn')
 };
 
 const game = {
@@ -267,6 +269,7 @@ function update(dt) {
 }
 
 ui.startBtn.addEventListener('click', startNew);
+ui.reloadGameBtn?.addEventListener('click', () => window.location.reload());
 ui.nextLevelBtn?.addEventListener('click', () => { if (game.currentLevel >= 40) { game.state = 'menu'; showOnly(ui.menu); return; } newRun(game.currentLevel + 1); game.unlockedLevel = Math.max(game.unlockedLevel, game.currentLevel); game.state = 'playing'; showOnly(null); persist(); });
 if (ui.restartBtn) ui.restartBtn.addEventListener('click', startNew);
 ui.retryBtn.addEventListener('click', () => { newRun(game.currentLevel, game.checkpoint); game.state = 'playing'; showOnly(null); });
@@ -290,12 +293,26 @@ ui.soundBtn.addEventListener('click', toggleSound);
 ui.soundMenuBtn.addEventListener('click', toggleSound);
 
 let lastTime = 0;
+let animationStopped = false;
 function frame(time) {
+  if (animationStopped) return;
   const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.035) : 0;
   lastTime = time;
-  update(dt);
-  if (!game.player) game.player = new Player(80, game.world.floorY);
-  renderer.render(game);
+  try {
+    update(dt);
+    if (!game.player) game.player = new Player(80, game.world.floorY);
+    renderer.render(game);
+  } catch (error) {
+    // Never leave the player with a silent black canvas if a browser graphics
+    // feature is missing. Keep the failure visible and offer a clean reload.
+    console.error('SHADOW WORLD stopped while rendering:', error);
+    animationStopped = true;
+    ui.runtimeError?.classList.add('visible');
+    ui.touchControls?.classList.remove('active');
+    const detail = ui.runtimeError?.querySelector('#runtimeErrorDetail');
+    if (detail) detail.textContent = 'Your browser stopped drawing the game. Reload this page or open it in an updated Chrome browser.';
+    return;
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

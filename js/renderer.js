@@ -1,3 +1,4 @@
+import { roundedRectPath } from './canvas-utils.js';
 const W = 960;
 const H = 540;
 
@@ -323,7 +324,7 @@ export class Renderer {
     for (const branch of world.branches) {
       if (branch.triggered && branch.warning > 0) { ctx.fillStyle = `rgba(170,25,25,${.12 + Math.sin(world.time * 28) * .09})`; ctx.beginPath(); ctx.ellipse(branch.x + 45, world.floorY - 5, 64, 12, 0, 0, Math.PI * 2); ctx.fill(); }
       ctx.save(); ctx.translate(branch.x + 45, branch.y + 8); ctx.rotate(branch.angle + (branch.y - branch.baseY) * .001);
-      ctx.fillStyle = '#121a1d'; ctx.beginPath(); ctx.roundRect(-52, -8, 105, 18, 8); ctx.fill();
+      ctx.fillStyle = '#121a1d'; ctx.beginPath(); roundedRectPath(ctx, -52, -8, 105, 18, 8); ctx.fill();
       ctx.strokeStyle = 'rgba(190,197,188,.27)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-38, -4); ctx.lineTo(42, -4); ctx.stroke(); ctx.restore();
     }
   }
