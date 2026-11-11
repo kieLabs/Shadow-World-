@@ -1,157 +1,66 @@
-@media (max-width: 700px) {
-  body { display: block; min-height: 100dvh; overflow: hidden; }
-  .app-shell { width: 100%; padding: 8px 8px max(8px, env(safe-area-inset-bottom)); }
-  .topbar { min-height: 34px; padding-bottom: 8px; }
-  .brand { font-size: 12px; gap: 6px; letter-spacing: 1.4px; }
-  .brand img { width: 24px; height: 24px; }
-  .chapter-label { font-size: 7px; gap: 5px; letter-spacing: 1px; }
-  .chapter-label b { display: none; }
-  .top-actions { gap: 5px; }
-  .icon-button { width: 31px; height: 28px; }
-  .game-frame { padding-top: 8px; }
-  .game-stage { width: 100%; aspect-ratio: 16 / 9; }
-  .hud { height: 48px; padding: 8px 9px 0; grid-template-columns: 1fr 64px; gap: 6px; }
-  .hud-chapter { display: none; }
-  .objective { grid-column: 1; justify-self: start; text-align: left; padding-top: 0; }
-  .objective span { font-size: 7px; line-height: 1.3; display: block; }
-  .objective small { display: none; }
-  .progress-wrap { grid-column: 2; gap: 4px; padding-top: 7px; }
-  .progress-wrap > span { font-size: 7px; min-width: 19px; }
-  .control-hint { display: none; }
-  .menu-panel { left: 6%; width: 65%; transform: translateY(-44%); }
-  .eyebrow { font-size: 6px; letter-spacing: 1.3px; margin-bottom: 10px; }
-  h1 { font-size: clamp(44px, 13vw, 76px); }
-  .tagline { margin: 13px 0 7px; font-size: 6px; letter-spacing: 1.4px; }
-  .intro-copy { font-size: 7px; line-height: 1.6; margin-bottom: 11px; }
-  .menu-actions { gap: 5px; flex-wrap: wrap; }
-  .primary-button, .secondary-button { min-height: 31px; padding: 0 9px; font-size: 6px; letter-spacing: .8px; }
-  .primary-button { min-width: 135px; }
-  .secondary-button { min-width: 86px; }
-  .primary-button span { font-size: 13px; }
-  .text-button { font-size: 6px; margin-top: 8px; letter-spacing: 1px; }
-  .menu-foot { margin-top: 10px; padding-top: 6px; width: 145%; font-size: 5px; letter-spacing: .65px; }
-  .menu-side-note { right: 5%; bottom: 12%; font-size: 7px; letter-spacing: 1px; }
-  .dialog-panel { padding: 20px 18px; width: min(330px, 88%); }
-  h2 { font-size: clamp(38px, 11vw, 58px); }
-  .dialog-panel > p { font-size: 8px; margin: 12px 0 15px; }
-  .dialog-panel .primary-button { min-width: 0; }
-  .chapter-complete { font-size: 6px; padding: 8px 0; }
-  .touch-controls { display: none; position: relative; height: 88px; align-items: center; justify-content: space-between; padding: 5px 9px 0; z-index: 20; pointer-events: none; }
-  .touch-controls.active { display: flex; }
-  .game-stage:has(#menuScreen.visible) .hud { visibility: hidden; }
-  .move-pad, .vertical-pad, .action-pad { display: flex; align-items: center; gap: 7px; pointer-events: auto; }
-  .vertical-pad { flex-direction: column; gap: 5px; }
-  .touch-button { display: grid; place-items: center; border: 1px solid rgba(200,215,207,.34); color: rgba(231,239,232,.9); background: rgba(16,25,28,.88); box-shadow: 0 4px 18px rgba(0,0,0,.38); border-radius: 50%; touch-action: none; user-select: none; -webkit-user-select: none; padding: 0; }
-  .touch-button:active { background: rgba(177,194,184,.4); border-color: rgba(231,239,232,.75); }
-  .direction, .vertical, .jump, .interact { width: 42px; height: 42px; min-width: 42px; min-height: 42px; flex: 0 0 42px; }
-  .direction { font-size: 25px; line-height: 1; }
-  .vertical { font-size: 18px; line-height: 1; }
-  .jump { font-size: 8px; letter-spacing: .3px; font-weight: 900; border-color: rgba(220,232,222,.55); }
-  .interact { font-size: 11px; font-weight: 900; }
-  .touch-pause { display: grid; place-items: center; position: fixed; top: 7px; right: 7px; z-index: 22; pointer-events: auto; width: 42px; height: 42px; border: 1px solid rgba(210,225,218,.38); border-radius: 4px; color: #e6eee8; background: rgba(5,10,13,.82); font-size: 16px; }
-  .footer-bar { margin-top: 3px; min-height: 20px; font-size: 6px; letter-spacing: .6px; }
-  .footer-center { display: none; }
+/* Mobile & Play Store Touch Controls */
+#touch-controls {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 16;
+  pointer-events: none;
 }
-
-@media (max-width: 380px) {
-  .chapter-label { display: none; }
-  .app-shell { padding-left: 5px; padding-right: 5px; }
-  .touch-controls { height: 80px; padding-left: 5px; padding-right: 5px; }
-  .move-pad, .vertical-pad, .action-pad { gap: 5px; }
-  .direction, .vertical, .jump, .interact { width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-basis: 38px; }
+.touch-cluster {
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
 }
-
-@media (orientation: landscape) and (max-height: 520px) {
-  body { display: block; overflow: hidden; }
-  .app-shell { padding-top: 4px; }
-  .topbar { min-height: 28px; padding-bottom: 4px; }
-  .game-frame { padding-top: 4px; }
-  .touch-controls.active { display: flex; position: absolute; inset: auto 0 4px; height: 88px; padding: 0 14px; }
-  .move-pad, .vertical-pad, .action-pad { gap: 7px; }
-  .vertical-pad { gap: 5px; }
-  .direction, .vertical, .jump, .interact { width: 42px; height: 42px; min-width: 42px; min-height: 42px; flex: 0 0 42px; }
-  .direction { font-size: 25px; }
-  .vertical { font-size: 18px; }
-  .jump { font-size: 8px; }
-  .interact { font-size: 11px; }
-  .touch-pause { top: 5px; right: 5px; width: 42px; height: 42px; }
-  .footer-bar { display: none; }
-}
-
-.rotate-prompt { display: none; }
-@media (max-width: 900px) and (orientation: portrait) {
-  .rotate-prompt {
-    position: fixed; inset: 0; z-index: 30; display: flex;
-    flex-direction: column; align-items: center; justify-content: center;
-    gap: 12px; padding: 24px; text-align: center;
-    background: rgba(4,8,11,.96); color: #edf1eb;
-  }
-  .rotate-icon { position: relative; font-size: 58px; line-height: 1; transform: rotate(90deg); color: #d7e0d9; }
-  .rotate-icon b { position: absolute; right: -24px; top: -10px; font-size: 30px; color: #aebbb4; }
-  .rotate-prompt strong { font: 800 20px 'Barlow Condensed', Impact, sans-serif; letter-spacing: 2px; }
-  .rotate-prompt small { color: #9eaaa4; font-size: 11px; letter-spacing: .5px; }
-}
-
-@media (max-width: 1100px) and (orientation: landscape) and (max-height: 600px) {
-  html, body { width: 100%; height: 100%; min-height: 100%; overflow: hidden; }
-  body { display: block; }
-  .app-shell { position: fixed; inset: 0; width: 100%; height: 100dvh; padding: 0; margin: 0; }
-  .topbar, .footer-bar { display: none !important; }
-  .game-frame { position: fixed; inset: 0; width: 100vw; height: 100dvh; padding: 0; margin: 0; }
-  .game-stage { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border: 0; box-shadow: none; }
-  #gameCanvas { width: 100%; height: 100%; }
-  .hud { height: 42px; padding: 7px 12px 0; grid-template-columns: 1fr minmax(110px, 1fr) 90px; gap: 8px; }
-  .objective span { font-size: 8px; }
-  .progress-wrap { padding-top: 5px; }
-  .touch-controls.active {
-    display: flex; position: fixed; left: 0; right: 0;
-    bottom: max(6px, calc(env(safe-area-inset-bottom) + 4px));
-    height: 88px; padding: 0 12px; margin: 0;
-    align-items: center; justify-content: space-between;
-    z-index: 20; pointer-events: none;
-  }
-  .move-pad, .vertical-pad, .action-pad { gap: 7px; }
-  .vertical-pad { gap: 5px; }
-  .direction, .vertical, .jump, .interact { width: 42px; height: 42px; min-width: 42px; min-height: 42px; flex: 0 0 42px; }
-  .direction { font-size: 25px; }
-  .vertical { font-size: 18px; }
-  .jump { font-size: 8px; }
-  .interact { font-size: 11px; }
-  .touch-button { border-width: 2px; background: rgba(14,22,25,.91); box-shadow: 0 4px 20px rgba(0,0,0,.48); }
-  .touch-pause { top: 5px; right: 6px; }
-  .control-hint { display: none; }
-}
-
-/* Touch reliability: keep the controls above the canvas and suppress browser gestures. */
-.touch-controls.active {
-  z-index: 40;
-  isolation: isolate;
-}
-.touch-controls.active .move-pad,
-.touch-controls.active .vertical-pad,
-.touch-controls.active .action-pad,
-.touch-controls.active .touch-pause,
-.touch-controls.active .touch-button {
-  pointer-events: auto !important;
-}
-.touch-controls.active .touch-button {
-  position: relative;
-  touch-action: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  user-select: none;
-  -webkit-user-select: none;
+.touch-pad {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(15, 16, 20, 0.58);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
   cursor: pointer;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.65);
+  transition: transform 0.08s, background 0.08s, border-color 0.08s;
 }
-.touch-controls.active .touch-button:focus-visible,
-.touch-controls.active .touch-pause:focus-visible {
-  outline: 2px solid rgba(235,244,237,.9);
-  outline-offset: 3px;
+.touch-pad span.icon {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 2px;
 }
-
-@media (max-width: 380px) and (orientation: landscape) and (max-height: 520px) {
-  .touch-controls.active { height: 80px; padding-left: 8px; padding-right: 8px; }
-  .direction, .vertical, .jump, .interact { width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-basis: 38px; }
-  .touch-pause { width: 38px; height: 38px; }
-  .move-pad, .vertical-pad, .action-pad { gap: 5px; }
+.touch-pad.pressed {
+  background: rgba(255, 255, 255, 0.32);
+  border-color: #ffffff;
+  transform: scale(0.93);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+}
+@media (max-width: 600px) {
+  .touch-pad {
+    width: 56px;
+    height: 56px;
+    font-size: 9px;
+  }
+  .hud-pill {
+    font-size: 10px;
+    padding: 4px 7px;
+  }
+  .hud-btn {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+  .modal-title {
+    font-size: 22px;
+    letter-spacing: 5px;
+  }
 }
